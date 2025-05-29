@@ -4,6 +4,8 @@ A swift package for achieving snapping behaviour in SwiftUI-scroll views for ite
 ## What it solves
 When using a SwiftUI scroll view, there are a couple of predefined scrolling behaviour that one can implement. However those default behaviour adopting the ScrollTargetBehaviour protocol will not work when the dimension aligned with the scroll direction of children views is variable ( think of a horizontal scroll view with images in scale aspect fit  whose frame height is set and width parameter is left free)
 To better visualize the issue, we can write a simple demo showing rectangles of variable width. The GIF shows the default scroll target behaviour .viewAligned. Also the contentMargin of the scroll view is being set so that the first and last item appears at the center of the screen. 
+
+
 ![Demo GIF](https://github.com/Ilsommo97/CenterSnappingScrollView/blob/main/faulted_snap.gif?raw=true)
 ```swift
 struct FaultedSnapExample: View {
