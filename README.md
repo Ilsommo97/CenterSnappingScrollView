@@ -1,12 +1,18 @@
 # CenterSnappingScrollView
-A swift package for achieving snapping behaviour in SwiftUI-scroll views for items with variable widths/heights.
 
-## What it solves
-When using a SwiftUI scroll view, there are a couple of predefined scrolling behaviour that one can implement. However those default behaviour adopting the ScrollTargetBehaviour protocol will not work when the dimension aligned with the scroll direction of children views is variable ( think of a horizontal scroll view with images in scale aspect fit  whose frame height is set and width parameter is left free)
-To better visualize the issue, we can write a simple demo showing rectangles of variable width. The GIF shows the default scroll target behaviour .viewAligned. Also the contentMargin of the scroll view is being set so that the first and last item appears at the center of the screen. 
+A Swift package for achieving precise snapping behavior in SwiftUI `ScrollView` with items of variable widths or heights.
+
+## The Problem
+
+SwiftUI's native `ScrollTargetBehavior` (via `ScrollTargetBehaviorProtocol`) fails to align items correctly when their dimensions along the scroll axis are dynamic. For example:
+- A horizontal `ScrollView` with images in `aspectFit` mode (variable widths)
+- A vertical `ScrollView` with text of inconsistent heights
+
+### Demonstration of the Issue
+
+![Faulted Snap Behavior](https://github.com/Ilsommo97/CenterSnappingScrollView/blob/main/faulted_snap.gif?raw=true)
 
 
-![Demo GIF](https://github.com/Ilsommo97/CenterSnappingScrollView/blob/main/faulted_snap.gif?raw=true)
 ```swift
 struct FaultedSnapExample: View {
     let screenWidth = UIScreen.main.bounds.width
@@ -47,18 +53,31 @@ struct FaultedSnapExample: View {
 }
 
 ```
+## The Solution
+CenterSnappingScrollView ensures consistent snapping behavior regardless of item dimensions. Simply:
+
+- Apply the  `.snappingItem()`  modifier to child views
+
+- Use the  `.centerSnappingScroll(spacing:axis:)()`  modifier on the parent ScrollView
+
+
+## Correct Behaviour
+![Faulted Snap Behavior](https://github.com/Ilsommo97/CenterSnappingScrollView/blob/main/correct_snap.gif?raw=true)
 
 ## Usage
-
 ```swift
-import CenterSnappingScrollView
-
-ScrollView(.horizontal) {
-    HStack(spacing: 16) {
-        ForEach(items) { item in
-            ItemView(item: item)
-                .scrollTargetCenterLayout()
-        }
-    }
-}
-.scrollSnapsToCenter(spacing: 16)
+         ScrollView(.horizontal) {
+                HStack(spacing: 24) {
+                    ForEach(0..<10, id: \.self) { index in
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(Color.blue.opacity(0.7))
+                            .frame(width:  CGFloat((index + 1) * 20),
+                                   height: 100
+                            )
+                            .snappingItem()
+                    }
+                }
+            }
+            .scrollIndicators(.hidden)
+            .centerSnappingScroll(spacing: 24, axis: .horizontal)
+```
